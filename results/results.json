@@ -1,0 +1,966 @@
+{
+  "static": {
+    "aalb": {
+      "0.0": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 6.734093148668629,
+          "p95_delay": 10.4,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 6.699144106530769,
+          "p95_delay": 10.8,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 6.851767186425709,
+          "p95_delay": 11.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 6.716858618022654,
+          "p95_delay": 11.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 6.754248543839161,
+          "p95_delay": 11.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.2": {
+        "50": {
+          "success_rate": 0.8068841667556896,
+          "mean_delay": 6.6618529009226695,
+          "p95_delay": 10.4,
+          "throughput": 0.32500000000000007,
+          "admitted": 39.0,
+          "rejected": 9.5
+        },
+        "100": {
+          "success_rate": 0.8191315516307964,
+          "mean_delay": 6.673678262692755,
+          "p95_delay": 10.6,
+          "throughput": 0.6858333333333333,
+          "admitted": 82.3,
+          "rejected": 18.2
+        },
+        "150": {
+          "success_rate": 0.8110067384201802,
+          "mean_delay": 6.88769867301573,
+          "p95_delay": 11.0,
+          "throughput": 1.0150000000000001,
+          "admitted": 121.8,
+          "rejected": 28.2
+        },
+        "200": {
+          "success_rate": 0.8114137891471703,
+          "mean_delay": 6.703436390670819,
+          "p95_delay": 10.8,
+          "throughput": 1.3541666666666665,
+          "admitted": 162.5,
+          "rejected": 37.7
+        },
+        "250": {
+          "success_rate": 0.8095773646139867,
+          "mean_delay": 6.757240020468606,
+          "p95_delay": 11.0,
+          "throughput": 1.6891666666666665,
+          "admitted": 202.7,
+          "rejected": 47.7
+        }
+      },
+      "0.4": {
+        "50": {
+          "success_rate": 0.5644189918991339,
+          "mean_delay": 11.219397122203917,
+          "p95_delay": 15.0,
+          "throughput": 0.22833333333333333,
+          "admitted": 27.4,
+          "rejected": 21.1
+        },
+        "100": {
+          "success_rate": 0.5938102387638508,
+          "mean_delay": 11.238161764720365,
+          "p95_delay": 14.8,
+          "throughput": 0.49833333333333324,
+          "admitted": 59.8,
+          "rejected": 40.7
+        },
+        "150": {
+          "success_rate": 0.5959740644921578,
+          "mean_delay": 11.350971750247625,
+          "p95_delay": 15.0,
+          "throughput": 0.7491666666666668,
+          "admitted": 89.9,
+          "rejected": 60.1
+        },
+        "200": {
+          "success_rate": 0.595920512733054,
+          "mean_delay": 11.147284076942915,
+          "p95_delay": 15.0,
+          "throughput": 0.9958333333333333,
+          "admitted": 119.5,
+          "rejected": 80.7
+        },
+        "250": {
+          "success_rate": 0.597085118172268,
+          "mean_delay": 11.276606485531463,
+          "p95_delay": 15.0,
+          "throughput": 1.2466666666666666,
+          "admitted": 149.6,
+          "rejected": 100.8
+        }
+      },
+      "0.7": {
+        "50": {
+          "success_rate": 0.30778252325555167,
+          "mean_delay": 14.083992135315665,
+          "p95_delay": 17.8,
+          "throughput": 0.125,
+          "admitted": 15.0,
+          "rejected": 33.5
+        },
+        "100": {
+          "success_rate": 0.28820899367105157,
+          "mean_delay": 14.416082389523712,
+          "p95_delay": 18.0,
+          "throughput": 0.2425,
+          "admitted": 29.1,
+          "rejected": 71.4
+        },
+        "150": {
+          "success_rate": 0.2953024724743607,
+          "mean_delay": 14.373137533978053,
+          "p95_delay": 18.0,
+          "throughput": 0.3725,
+          "admitted": 44.7,
+          "rejected": 105.3
+        },
+        "200": {
+          "success_rate": 0.29072388358555656,
+          "mean_delay": 14.200855873517165,
+          "p95_delay": 18.0,
+          "throughput": 0.4875,
+          "admitted": 58.5,
+          "rejected": 141.7
+        },
+        "250": {
+          "success_rate": 0.29781271516713675,
+          "mean_delay": 14.241437277810983,
+          "p95_delay": 18.0,
+          "throughput": 0.6233333333333333,
+          "admitted": 74.8,
+          "rejected": 175.6
+        }
+      },
+      "0.8": {
+        "50": {
+          "success_rate": 0.20407131248493462,
+          "mean_delay": 14.119458874458875,
+          "p95_delay": 17.8,
+          "throughput": 0.0825,
+          "admitted": 9.9,
+          "rejected": 38.6
+        },
+        "100": {
+          "success_rate": 0.19322856619380838,
+          "mean_delay": 14.449788910779626,
+          "p95_delay": 18.0,
+          "throughput": 0.1625,
+          "admitted": 19.5,
+          "rejected": 81.0
+        },
+        "150": {
+          "success_rate": 0.19584582196330944,
+          "mean_delay": 14.318822236126584,
+          "p95_delay": 18.0,
+          "throughput": 0.24666666666666667,
+          "admitted": 29.6,
+          "rejected": 120.4
+        },
+        "200": {
+          "success_rate": 0.19102386536465915,
+          "mean_delay": 14.220737785704475,
+          "p95_delay": 18.0,
+          "throughput": 0.31999999999999995,
+          "admitted": 38.4,
+          "rejected": 161.8
+        },
+        "250": {
+          "success_rate": 0.1958858488679364,
+          "mean_delay": 14.287742656318386,
+          "p95_delay": 18.0,
+          "throughput": 0.41083333333333333,
+          "admitted": 49.3,
+          "rejected": 201.1
+        }
+      }
+    },
+    "rr_sfc": {
+      "0.0": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.27125323813822,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.258846613719319,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.301141241392628,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.242504924795705,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.336240506611428,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.2": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.27125323813822,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.258846613719319,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.301141241392628,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.242504924795705,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.336240506611428,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.4": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.27125323813822,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.258846613719319,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.301141241392628,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.242504924795705,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.336240506611428,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.7": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.27125323813822,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.258846613719319,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.301141241392628,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.242504924795705,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.336240506611428,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.8": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.27125323813822,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.258846613719319,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.301141241392628,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.242504924795705,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.336240506611428,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      }
+    },
+    "lc_sfc": {
+      "0.0": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.266905412051264,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.26088743004585,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.294266702396687,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.235242243052635,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.33999818590857,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.2": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.266905412051264,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.26088743004585,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.294266702396687,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.235242243052635,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.33999818590857,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.4": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.266905412051264,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.26088743004585,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.294266702396687,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.235242243052635,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.33999818590857,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.7": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.266905412051264,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.26088743004585,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.294266702396687,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.235242243052635,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.33999818590857,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.8": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 14.266905412051264,
+          "p95_delay": 18.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 14.26088743004585,
+          "p95_delay": 18.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 14.294266702396687,
+          "p95_delay": 18.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 14.235242243052635,
+          "p95_delay": 18.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 14.33999818590857,
+          "p95_delay": 18.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      }
+    },
+    "original_aalb": {
+      "0.0": {
+        "50": {
+          "success_rate": 1.0,
+          "mean_delay": 11.262557585964306,
+          "p95_delay": 15.0,
+          "throughput": 0.4041666666666667,
+          "admitted": 48.5,
+          "rejected": 0.0
+        },
+        "100": {
+          "success_rate": 1.0,
+          "mean_delay": 11.256805797392792,
+          "p95_delay": 15.0,
+          "throughput": 0.8375,
+          "admitted": 100.5,
+          "rejected": 0.0
+        },
+        "150": {
+          "success_rate": 1.0,
+          "mean_delay": 11.28523678565713,
+          "p95_delay": 15.0,
+          "throughput": 1.25,
+          "admitted": 150.0,
+          "rejected": 0.0
+        },
+        "200": {
+          "success_rate": 1.0,
+          "mean_delay": 11.219690899261725,
+          "p95_delay": 15.0,
+          "throughput": 1.6683333333333334,
+          "admitted": 200.2,
+          "rejected": 0.0
+        },
+        "250": {
+          "success_rate": 1.0,
+          "mean_delay": 11.304697466989289,
+          "p95_delay": 15.0,
+          "throughput": 2.086666666666667,
+          "admitted": 250.4,
+          "rejected": 0.0
+        }
+      },
+      "0.2": {
+        "50": {
+          "success_rate": 0.8068841667556896,
+          "mean_delay": 11.226948726948729,
+          "p95_delay": 15.0,
+          "throughput": 0.32500000000000007,
+          "admitted": 39.0,
+          "rejected": 9.5
+        },
+        "100": {
+          "success_rate": 0.8191315516307964,
+          "mean_delay": 11.203274862550225,
+          "p95_delay": 15.0,
+          "throughput": 0.6858333333333333,
+          "admitted": 82.3,
+          "rejected": 18.2
+        },
+        "150": {
+          "success_rate": 0.8110067384201802,
+          "mean_delay": 11.294434637307361,
+          "p95_delay": 15.0,
+          "throughput": 1.0150000000000001,
+          "admitted": 121.8,
+          "rejected": 28.2
+        },
+        "200": {
+          "success_rate": 0.8114137891471703,
+          "mean_delay": 11.18091533583556,
+          "p95_delay": 15.0,
+          "throughput": 1.3541666666666665,
+          "admitted": 162.5,
+          "rejected": 37.7
+        },
+        "250": {
+          "success_rate": 0.8095773646139867,
+          "mean_delay": 11.300647997681288,
+          "p95_delay": 15.0,
+          "throughput": 1.6891666666666665,
+          "admitted": 202.7,
+          "rejected": 47.7
+        }
+      },
+      "0.4": {
+        "50": {
+          "success_rate": 0.5644189918991339,
+          "mean_delay": 11.219397122203917,
+          "p95_delay": 15.0,
+          "throughput": 0.22833333333333333,
+          "admitted": 27.4,
+          "rejected": 21.1
+        },
+        "100": {
+          "success_rate": 0.5938102387638508,
+          "mean_delay": 11.238161764720365,
+          "p95_delay": 14.8,
+          "throughput": 0.49833333333333324,
+          "admitted": 59.8,
+          "rejected": 40.7
+        },
+        "150": {
+          "success_rate": 0.5959740644921578,
+          "mean_delay": 11.350971750247625,
+          "p95_delay": 15.0,
+          "throughput": 0.7491666666666668,
+          "admitted": 89.9,
+          "rejected": 60.1
+        },
+        "200": {
+          "success_rate": 0.595920512733054,
+          "mean_delay": 11.147284076942915,
+          "p95_delay": 15.0,
+          "throughput": 0.9958333333333333,
+          "admitted": 119.5,
+          "rejected": 80.7
+        },
+        "250": {
+          "success_rate": 0.597085118172268,
+          "mean_delay": 11.276606485531463,
+          "p95_delay": 15.0,
+          "throughput": 1.2466666666666666,
+          "admitted": 149.6,
+          "rejected": 100.8
+        }
+      },
+      "0.7": {
+        "50": {
+          "success_rate": 0.30778252325555167,
+          "mean_delay": 11.083992135315665,
+          "p95_delay": 14.8,
+          "throughput": 0.125,
+          "admitted": 15.0,
+          "rejected": 33.5
+        },
+        "100": {
+          "success_rate": 0.28820899367105157,
+          "mean_delay": 11.416082389523712,
+          "p95_delay": 15.0,
+          "throughput": 0.2425,
+          "admitted": 29.1,
+          "rejected": 71.4
+        },
+        "150": {
+          "success_rate": 0.2953024724743607,
+          "mean_delay": 11.37313753397805,
+          "p95_delay": 15.0,
+          "throughput": 0.3725,
+          "admitted": 44.7,
+          "rejected": 105.3
+        },
+        "200": {
+          "success_rate": 0.29072388358555656,
+          "mean_delay": 11.198258470919761,
+          "p95_delay": 15.0,
+          "throughput": 0.4875,
+          "admitted": 58.5,
+          "rejected": 141.7
+        },
+        "250": {
+          "success_rate": 0.29781271516713675,
+          "mean_delay": 11.23937542214088,
+          "p95_delay": 15.0,
+          "throughput": 0.6233333333333333,
+          "admitted": 74.8,
+          "rejected": 175.6
+        }
+      },
+      "0.8": {
+        "50": {
+          "success_rate": 0.20407131248493462,
+          "mean_delay": 11.119458874458875,
+          "p95_delay": 14.8,
+          "throughput": 0.0825,
+          "admitted": 9.9,
+          "rejected": 38.6
+        },
+        "100": {
+          "success_rate": 0.19322856619380838,
+          "mean_delay": 11.449788910779622,
+          "p95_delay": 15.0,
+          "throughput": 0.1625,
+          "admitted": 19.5,
+          "rejected": 81.0
+        },
+        "150": {
+          "success_rate": 0.19584582196330944,
+          "mean_delay": 11.318822236126584,
+          "p95_delay": 15.0,
+          "throughput": 0.24666666666666667,
+          "admitted": 29.6,
+          "rejected": 120.4
+        },
+        "200": {
+          "success_rate": 0.19102386536465915,
+          "mean_delay": 11.220737785704475,
+          "p95_delay": 15.0,
+          "throughput": 0.31999999999999995,
+          "admitted": 38.4,
+          "rejected": 161.8
+        },
+        "250": {
+          "success_rate": 0.1958858488679364,
+          "mean_delay": 11.287742656318384,
+          "p95_delay": 15.0,
+          "throughput": 0.41083333333333333,
+          "admitted": 49.3,
+          "rejected": 201.1
+        }
+      }
+    }
+  },
+  "reconfig": {
+    "trace_a": {
+      "aalb": {
+        "upgrades": 92.8,
+        "downgrades": 57.2,
+        "blocked": 4.4,
+        "profile_frac": {
+          "0": 0.44365453373356206,
+          "1": 0.556345466266438,
+          "2": 0.0
+        },
+        "mean_reconfig_delay": 12.13357422719125
+      },
+      "rr_sfc": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 1.0
+        },
+        "mean_reconfig_delay": 0.0
+      },
+      "lc_sfc": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 1.0
+        },
+        "mean_reconfig_delay": 0.0
+      },
+      "original_aalb": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 1.0,
+          "2": 0.0
+        },
+        "mean_reconfig_delay": 0.0
+      }
+    },
+    "trace_b": {
+      "aalb": {
+        "upgrades": 38.4,
+        "downgrades": 104.8,
+        "blocked": 5.6,
+        "profile_frac": {
+          "0": 0.3601038491138592,
+          "1": 0.2845416953523987,
+          "2": 0.3553544555337421
+        },
+        "mean_reconfig_delay": 15.813027225511927
+      },
+      "rr_sfc": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 1.0
+        },
+        "mean_reconfig_delay": 0.0
+      },
+      "lc_sfc": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 0.0,
+          "2": 1.0
+        },
+        "mean_reconfig_delay": 0.0
+      },
+      "original_aalb": {
+        "upgrades": 0.0,
+        "downgrades": 0.0,
+        "blocked": 0.0,
+        "profile_frac": {
+          "0": 0.0,
+          "1": 1.0,
+          "2": 0.0
+        },
+        "mean_reconfig_delay": 0.0
+      }
+    }
+  },
+  "params": {
+    "req_rates": [
+      50,
+      100,
+      150,
+      200,
+      250
+    ],
+    "attack_etas": [
+      0.0,
+      0.2,
+      0.4,
+      0.7,
+      0.8
+    ],
+    "duration_static": 120.0,
+    "n_runs_static": 10,
+    "duration_reconfig": 120.0,
+    "n_runs_reconfig": 5
+  }
+}
