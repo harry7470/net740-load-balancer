@@ -37,11 +37,18 @@ VNF_SPECS = {
     'FW': {'cpu': 0.20, 'mem': 192, 'delay': 3.0},
 }
 
+# Security profiles and their VNF chains
+# K0 = LB only (no classifier, no firewall — cannot filter malicious traffic)
+# K1 = RF + LB (Random Forest classifier — can detect and filter attacks)
+# K2 = FW + RF + LB (Firewall + classifier — strongest protection)
 PROFILES = {
     0: ['LB'],
     1: ['RF', 'LB'],
     2: ['FW', 'RF', 'LB'],
 }
+
+# Profiles that CAN filter malicious traffic (have RF or FW)
+FILTERING_PROFILES = {1, 2}
 
 # Attack state thresholds
 TAU1 = 0.30
@@ -50,12 +57,15 @@ TAU2 = 0.60
 # Cost weight
 ALPHA = 0.6
 
-# Holding interval (seconds)
+# Holding interval (seconds) — must persist for TAU_H before downgrade
 TAU_H = 10.0
 
 # Request parameters
 REQ_BW     = 1.0    # Mbps
 DELAY_BOUND = 20.0  # ms
+
+# Mean service duration (seconds)
+MEAN_SERVICE_DUR = 0.1  # → expovariate(1/0.1) = expovariate(10)
 
 # Monitoring
 MON_INTERVAL = 1.0  # s
@@ -121,6 +131,22 @@ class FogState:
         # active requests: req_id -> {profile_idx, placement, route_links, release_time}
         self.active = {}
         self.next_req_id = 0
+        # Pre-compute all-pairs shortest paths (BFS once; paths are static)
+        self._path_cache = {}
+        for u in nodes:
+            for v in nodes:
+                if u != v and (u, v) not in self._path_cache:
+                    p = shortest_path(self.adj, u, v, len(nodes))
+                    self._path_cache[(u, v)] = p
+                    if p is not None:
+                        self._path_cache[(v, u)] = list(reversed(p))
+        # Pre-compute path delays and link sets for every (src,dst) pair
+        self._path_delay = {}
+        self._path_links = {}
+        for (u, v), p in self._path_cache.items():
+            if p is not None:
+                self._path_delay[(u, v)] = path_delay(p, self.link_delay)
+                self._path_links[(u, v)] = unique_links(p)
 
     def snapshot_avail(self):
         return (dict(self.cpu_avail), dict(self.mem_avail), dict(self.bw_avail))
@@ -162,14 +188,30 @@ class FogState:
             'attack_history': attack_history,
         }
 
+    def resource_utilization(self):
+        """
+        Return average CPU, memory, and bandwidth utilization across all nodes/links.
+        Utilization = used / capacity.
+        """
+        n = len(self.nodes)
+        cpu_util = sum(1.0 - self.cpu_avail[nd]/CPU_PER_NODE for nd in self.nodes) / n
+        mem_util = sum(1.0 - self.mem_avail[nd]/MEM_PER_NODE for nd in self.nodes) / n
+        bw_links = list(self.bw_avail.keys())
+        bw_util  = sum(1.0 - self.bw_avail[lk]/BW_PER_LINK for lk in bw_links) / max(1, len(bw_links))
+        return {'cpu': cpu_util, 'mem': mem_util, 'bw': bw_util}
+
 # ─── Placement / routing feasibility ─────────────────────────────────────────
 
 def find_realizations(state, profile_idx, src, dst, virtual_release=None,
-                      max_results=5):
+                      max_results=3):
     """
     Returns list of (placement_dict, ordered_node_path, route_links, end2end_delay).
     virtual_release: (vnf->node, links) to restore before checking (for reconfiguration).
-    max_results: cap the number of results returned (for speed).
+    max_results: cap — only the top-3 greedy candidates are tried.
+
+    Performance redesign: instead of exponential backtracking (O(N^|vnfs|)),
+    uses O(|vnfs|*N) greedy heuristics producing up to 3 candidate placements.
+    This makes the simulator viable at high load (400-800 req/s on 14 nodes).
     """
     vnfs = PROFILES[profile_idx]
     adj  = state.adj
@@ -185,93 +227,94 @@ def find_realizations(state, profile_idx, src, dst, virtual_release=None,
         for link in old_links:
             state.bw_avail[link] += REQ_BW
 
-    results = []
     nodes = state.nodes
+    # Use precomputed path data from state (avoids repeated BFS)
+    _path_cache  = state._path_cache
+    _path_delay  = state._path_delay
+    _path_links  = state._path_links
 
-    # Pre-cache shortest paths between all node pairs (lazy)
-    _path_cache = {}
-    def get_path(u, v):
-        key = (u, v)
-        if key not in _path_cache:
-            _path_cache[key] = shortest_path(adj, u, v, len(nodes))
-        return _path_cache[key]
+    def node_load(n):
+        cpu_used = 1.0 - state.cpu_avail[n] / CPU_PER_NODE
+        mem_used = 1.0 - state.mem_avail[n] / MEM_PER_NODE
+        return (cpu_used + mem_used) / 2.0
 
-    # Pre-filter candidate nodes for each VNF by resource availability
-    eligible = {}
-    for vnf in vnfs:
-        spec = VNF_SPECS[vnf]
-        eligible[vnf] = [n for n in nodes
-                         if state.cpu_avail[n] >= spec['cpu']
-                         and state.mem_avail[n] >= spec['mem']]
+    sorted_nodes = sorted(nodes, key=node_load)
 
-    def recurse_placement(vnf_idx, current_placement):
-        if len(results) >= max_results:
-            return
-        if vnf_idx == len(vnfs):
-            # all VNFs placed; try routing src -> vnf_nodes[0] -> ... -> vnf_nodes[-1] -> dst
-            vnf_nodes = [current_placement[v] for v in vnfs]
-            full_path_nodes = [src] + vnf_nodes + [dst]
-            # deduplicate consecutive same nodes
-            deduped = [full_path_nodes[0]]
-            for n in full_path_nodes[1:]:
-                if n != deduped[-1]:
-                    deduped.append(n)
+    def check_placement(placement):
+        """Evaluate a complete placement dict; return tuple or None."""
+        vnf_nodes = [placement[v] for v in vnfs]
+        full_path_nodes = [src] + vnf_nodes + [dst]
+        deduped = [full_path_nodes[0]]
+        for n in full_path_nodes[1:]:
+            if n != deduped[-1]:
+                deduped.append(n)
+        total_delay = 0.0
+        all_links   = set()
+        for i in range(len(deduped)-1):
+            s2, d2 = deduped[i], deduped[i+1]
+            if s2 == d2:
+                continue
+            key = (s2, d2)
+            if key not in _path_cache or _path_cache[key] is None:
+                return None
+            total_delay += _path_delay.get(key, 0.0)
+            all_links |= _path_links.get(key, set())
+        for vnf in vnfs:
+            total_delay += VNF_SPECS[vnf]['delay']
+        if total_delay > DELAY_BOUND:
+            return None
+        for link in all_links:
+            if state.bw_avail.get(link, 0) < REQ_BW:
+                return None
+        return (dict(placement), deduped, all_links, total_delay)
 
-            # check end-to-end path exists with BW
-            total_delay = 0.0
-            all_links   = set()
-            feasible = True
-            for i in range(len(deduped)-1):
-                seg_src = deduped[i]
-                seg_dst = deduped[i+1]
-                if seg_src == seg_dst:
+    def greedy_placement(prefer_spread=False, anchor=None):
+        """
+        Greedily assign each VNF to the least-loaded feasible node.
+        prefer_spread: try not to reuse the same node.
+        anchor: if given, prefer nodes close to this node.
+        """
+        p = {}
+        used = set()
+        for vnf in vnfs:
+            spec = VNF_SPECS[vnf]
+            best = None
+            best_score = float('inf')
+            for n in sorted_nodes:
+                if state.cpu_avail[n] < spec['cpu'] or state.mem_avail[n] < spec['mem']:
                     continue
-                seg_path = get_path(seg_src, seg_dst)
-                if seg_path is None:
-                    feasible = False
-                    break
-                total_delay += path_delay(seg_path, state.link_delay)
-                seg_links = unique_links(seg_path)
-                all_links |= seg_links
+                score = node_load(n)
+                if prefer_spread and n in used:
+                    score += 0.5   # penalty but not exclusion
+                if best is None or score < best_score:
+                    best_score = score
+                    best = n
+            if best is None:
+                return None
+            p[vnf] = best
+            used.add(best)
+        return p
 
-            if not feasible:
-                return
+    # Generate up to max_results distinct placements
+    candidates = []
+    seen = set()
 
-            # add VNF processing delays
-            for vnf in vnfs:
-                total_delay += VNF_SPECS[vnf]['delay']
+    for spread in [False, True, False]:
+        p = greedy_placement(prefer_spread=spread)
+        if p is None:
+            continue
+        key = tuple(sorted(p.items()))
+        if key not in seen:
+            seen.add(key)
+            candidates.append(p)
+        if len(candidates) >= max_results:
+            break
 
-            if total_delay > DELAY_BOUND:
-                return
-
-            # check bandwidth availability on all links (each link consumed once)
-            for link in all_links:
-                if state.bw_avail.get(link, 0) < REQ_BW:
-                    feasible = False
-                    break
-            if not feasible:
-                return
-
-            results.append((dict(current_placement), deduped, all_links, total_delay))
-            return
-
-        vnf = vnfs[vnf_idx]
-        spec = VNF_SPECS[vnf]
-        for n in eligible[vnf]:
-            if len(results) >= max_results:
-                break
-            if state.cpu_avail[n] >= spec['cpu'] and state.mem_avail[n] >= spec['mem']:
-                # tentatively place
-                state.cpu_avail[n] -= spec['cpu']
-                state.mem_avail[n] -= spec['mem']
-                current_placement[vnf] = n
-                recurse_placement(vnf_idx+1, current_placement)
-                # undo
-                state.cpu_avail[n] += spec['cpu']
-                state.mem_avail[n] += spec['mem']
-                del current_placement[vnf]
-
-    recurse_placement(0, {})
+    results = []
+    for p in candidates:
+        r = check_placement(p)
+        if r is not None:
+            results.append(r)
 
     # restore state
     state.restore_avail(snap)
@@ -504,11 +547,11 @@ class Simulator:
             return 'blocked'
 
         else:
-            # possible downgrade
+            # possible downgrade — only after TAU_H seconds of lower attack state
             elapsed = t - history[0][0]
             if elapsed < TAU_H:
                 return 'unchanged'
-            # check if lower profile was sufficient throughout last TAU_H
+            # check if lower profile was sufficient throughout last TAU_H seconds
             recent = [(ts, a) for (ts, a) in history if ts >= t - TAU_H]
             if not recent:
                 return 'unchanged'
@@ -538,49 +581,61 @@ class Simulator:
     def run_static(self, duration, req_rate, lambda_L, lambda_A, n_runs=10):
         """
         Simulate using discrete-event approach.
-        Returns dict of aggregate metrics.
+
+        FIX 1 (K0 filtering): K0 profile contains only LB — no RF classifier or
+        FW firewall. Malicious traffic must NOT be automatically blocked under K0.
+        Only profiles in FILTERING_PROFILES (K1, K2) can detect and drop attacks.
+
+        FIX 2 (admission rate formula):
+          Legitimate Admission Rate (%) = Admitted Legitimate / Total Legitimate × 100
+          NOT: admitted / (admitted + rejected) which conflates attack traffic.
+
+        FIX 3 (throughput formula):
+          Legitimate Throughput (req/s) = Completed Legitimate Requests / Duration
+
+        Returns dict of aggregate metrics including resource utilization.
         """
         all_metrics = []
         for run in range(n_runs):
             rng = random.Random(run * 1000 + 42)
             state = FogState(self.nodes, self.edges)
 
-            admitted = 0; rejected = 0; completed = 0
-            delays = []; throughputs = []
+            # Track legitimate and attack traffic separately
+            admitted_legit = 0
+            rejected_legit = 0   # legit requests denied due to resource congestion
+            admitted_attack = 0  # attack packets that slipped through (K0 only)
+            blocked_attack = 0   # attack packets filtered by K1/K2
+            completed_legit = 0
+            delays_legit = []
+
+            # Resource utilization snapshots
+            util_samples = []
+
             req_id = 0
 
             eta = compute_eta(lambda_L, lambda_A)
             a_t = compute_attack_state(eta)
 
-            # attack ratio applied to requests: fraction are "attack" requests
-            # attack requests are rejected/dropped at ingress for original_aalb/aalb
-            t = 0.0
-            events = []  # (time, type, req_id)
-
             # Generate arrivals
             t_arr = 0.0
+            events = []
             while t_arr < duration:
                 iat = rng.expovariate(req_rate)
                 t_arr += iat
                 if t_arr >= duration:
                     break
                 is_attack = rng.random() < eta
-                svc_dur = rng.expovariate(10.0)  # mean 0.1s
+                svc_dur = rng.expovariate(1.0 / MEAN_SERVICE_DUR)
                 events.append((t_arr, 'arrive', req_id, is_attack, svc_dur))
                 req_id += 1
 
             events.sort(key=lambda e: e[0])
 
-            pending_releases = []  # (time, req_id)
-            active_ids = {}
-
-            ev_idx = 0
-            t = 0.0
-            all_events = list(events)
-
-            # add release events dynamically
-            processed = set()
+            pending_releases = []  # (time, req_id, is_attack)
             i = 0
+            all_events = list(events)
+            next_util_sample = 1.0
+
             while i < len(all_events):
                 ev = all_events[i]
                 i += 1
@@ -588,46 +643,106 @@ class Simulator:
 
                 # process pending releases up to t
                 pending_releases.sort()
-                for (rel_t, rid) in list(pending_releases):
+                for (rel_t, rid, was_attack) in list(pending_releases):
                     if rel_t <= t:
                         state.release_request(rid)
-                        completed += 1
-                        pending_releases.remove((rel_t, rid))
+                        if not was_attack:
+                            completed_legit += 1
+                        pending_releases.remove((rel_t, rid, was_attack))
+
+                # sample resource utilization periodically
+                while next_util_sample <= t:
+                    util_samples.append(state.resource_utilization())
+                    next_util_sample += 1.0
 
                 if ev[1] == 'arrive':
                     _, _, rid, is_attack, svc_dur = ev
 
-                    if is_attack and self.method in ('aalb', 'original_aalb'):
-                        # attack traffic blocked at classify stage
-                        rejected += 1
+                    # ── FIX 1: Profile-aware attack filtering ──────────────
+                    # K0 (LB only): no classifier or firewall — attack traffic
+                    #   passes through exactly like legitimate traffic.
+                    # K1 (RF + LB): RF classifier detects and blocks attacks.
+                    # K2 (FW + RF + LB): FW + RF — strongest filtering.
+                    #
+                    # For AALB: the active profile is determined by a_t.
+                    # For RR-SFC / LC-SFC: always use K2 → always filter.
+                    # For Original AALB: fixed K1 → always filter.
+
+                    active_profile = a_t  # profile selected by AALB at this a_t
+
+                    can_filter = False
+                    if self.method in ('rr_sfc', 'lc_sfc'):
+                        can_filter = True   # always K2
+                    elif self.method == 'original_aalb':
+                        can_filter = True   # always K1
+                    elif self.method == 'aalb':
+                        # AALB uses profile >= a_t; when a_t=0, uses K0 → no filter
+                        can_filter = (active_profile in FILTERING_PROFILES)
+
+                    if is_attack and can_filter:
+                        # Attack detected and blocked by the active security profile
+                        blocked_attack += 1
                         continue
 
-                    # attempt admission
+                    # attempt admission for this request (legit or undetected attack)
                     src = rng.choice(self.nodes)
                     dst = rng.choice([n for n in self.nodes if n != src])
                     release_t = t + max(0.05, svc_dur)
 
                     ok = self._admit_one(state, rid, src, dst, t, release_t, a_t, rng)
                     if ok[0]:
-                        admitted += 1
-                        delays.append(ok[1])
-                        pending_releases.append((release_t, rid))
+                        if not is_attack:
+                            admitted_legit += 1
+                            delays_legit.append(ok[1])
+                        else:
+                            admitted_attack += 1  # undetected attack under K0
+                        pending_releases.append((release_t, rid, is_attack))
                     else:
-                        rejected += 1
+                        if not is_attack:
+                            rejected_legit += 1
 
+            # Final releases
+            for (rel_t, rid, was_attack) in pending_releases:
+                state.release_request(rid)
+                if not was_attack:
+                    completed_legit += 1
+
+            # Average resource utilization
+            if not util_samples:
+                util_samples = [state.resource_utilization()]
+            avg_util = {
+                'cpu': sum(u['cpu'] for u in util_samples) / len(util_samples),
+                'mem': sum(u['mem'] for u in util_samples) / len(util_samples),
+                'bw':  sum(u['bw']  for u in util_samples) / len(util_samples),
+            }
+
+            # Active requests estimate: N_active ≈ λ_legitimate × mean_service_dur
+            lambda_legit = req_rate * (1 - eta)
+            n_active_est = lambda_legit * MEAN_SERVICE_DUR
+
+            total_legit = admitted_legit + rejected_legit
             metrics = {
-                'admitted':     admitted,
-                'rejected':     rejected,
-                'total':        admitted + rejected,
-                'success_rate': admitted / max(1, admitted + rejected),
-                'mean_delay':   sum(delays)/len(delays) if delays else 0.0,
-                'p95_delay':    sorted(delays)[int(0.95*len(delays))] if delays else 0.0,
-                'throughput':   admitted / duration,
+                # FIX 2: Legitimate admission rate = admitted_legit / total_legit
+                'admission_rate':  admitted_legit / max(1, total_legit),
+                # FIX 3: Legitimate throughput = completed_legit / duration
+                'throughput':      completed_legit / duration,
+                'mean_delay':      sum(delays_legit)/len(delays_legit) if delays_legit else 0.0,
+                'p95_delay':       sorted(delays_legit)[int(0.95*len(delays_legit))] if delays_legit else 0.0,
+                'admitted_legit':  admitted_legit,
+                'rejected_legit':  rejected_legit,
+                'admitted_attack': admitted_attack,
+                'blocked_attack':  blocked_attack,
+                'n_active_est':    n_active_est,
+                'util_cpu':        avg_util['cpu'],
+                'util_mem':        avg_util['mem'],
+                'util_bw':         avg_util['bw'],
             }
             all_metrics.append(metrics)
 
         # average over runs
-        keys = ['success_rate', 'mean_delay', 'p95_delay', 'throughput', 'admitted', 'rejected']
+        keys = ['admission_rate', 'throughput', 'mean_delay', 'p95_delay',
+                'admitted_legit', 'rejected_legit', 'admitted_attack', 'blocked_attack',
+                'n_active_est', 'util_cpu', 'util_mem', 'util_bw']
         result = {}
         for k in keys:
             result[k] = sum(m[k] for m in all_metrics) / len(all_metrics)
@@ -682,16 +797,28 @@ class Simulator:
         """
         Long-lived requests with time-varying attack trace.
         attack_trace: list of (start_time, eta_value)
-        Returns dict with profile time fractions, upgrade/downgrade counts, etc.
+
+        FIX: Hysteresis — a downgrade only occurs when the lower attack state
+        has persisted CONTINUOUSLY for at least TAU_H=10 seconds. Records
+        transition timestamps for validation.
+
+        Returns dict with profile time fractions, upgrade/downgrade counts,
+        transition timestamps, and per-second profile trace.
         """
         all_metrics = []
+        profile_trace_out = None  # save trace from run 0
+
         for run in range(n_runs):
             rng = random.Random(run * 999 + 7)
             state = FogState(self.nodes, self.edges)
 
-            upgrades = 0; downgrades = 0; blocked = 0
+            upgrades = 0; downgrades = 0; blocked_count = 0
             profile_secs = {0: 0.0, 1: 0.0, 2: 0.0}
             reconfig_latencies = []
+            transition_timestamps = []  # (time, from_profile, to_profile, reason)
+
+            # Per-second profile trace for Fig 4
+            profile_trace = []   # list of {t, eta, a_t, profile, active_requests}
 
             req_id = 0
             admitted_reqs = {}  # req_id -> {'profile_idx', 'history', 'release_t'}
@@ -704,7 +831,7 @@ class Simulator:
                 t_arr += iat
                 if t_arr >= duration:
                     break
-                svc_dur = 120.0  # long-lived
+                svc_dur = 120.0  # long-lived requests
                 arrivals.append((t_arr, req_id, svc_dur))
                 req_id += 1
 
@@ -712,8 +839,13 @@ class Simulator:
             dt = 1.0
             arrival_idx = 0
             pending_releases = {}  # req_id -> release_t
-            t = 0.0
 
+            # Track current system-level profile (profile of majority of active reqs)
+            current_sys_profile = 0
+            # Track how long current attack state has been below current profile
+            low_attack_since = None   # time when attack dropped below profile level
+
+            t = 0.0
             while t < duration:
                 # current attack state
                 eta = 0.0
@@ -756,7 +888,7 @@ class Simulator:
                         history.append((t, a_t))
 
                         if k_cur < a_t:
-                            # mandatory upgrade
+                            # mandatory upgrade — immediate
                             K_plus = [k for k in range(3) if k >= a_t]
                             src2 = self.nodes[0]; dst2 = self.nodes[-1]
                             upgraded = False
@@ -768,46 +900,81 @@ class Simulator:
                                 if reals:
                                     raw = select_best(reals, state, k)
                                     pl, ph, lk, dl = raw[0], raw[1], raw[2], raw[3]
+                                    old_k = k_cur
                                     state.commit_realization(
                                         rid, k, pl, lk, info['release_time'], history
                                     )
                                     upgrades += 1
                                     reconfig_latencies.append(dl)
+                                    transition_timestamps.append(
+                                        (t, old_k, k, 'upgrade')
+                                    )
                                     upgraded = True
                                     break
                             if not upgraded:
                                 state.release_request(rid)
-                                blocked += 1
+                                blocked_count += 1
                                 admitted_reqs.pop(rid, None)
                                 pending_releases.pop(rid, None)
 
-                        else:
-                            # check downgrade
-                            elapsed = t - history[0][0]
-                            if elapsed >= TAU_H:
-                                recent = [(ts2, a2) for (ts2, a2) in history if ts2 >= t - TAU_H]
-                                if recent:
-                                    max_recent_a = max(a2 for (_, a2) in recent)
-                                    Wr = [k for k in range(k_cur) if k >= max_recent_a]
-                                    src2 = self.nodes[0]; dst2 = self.nodes[-1]
-                                    for k in Wr:
-                                        reals = find_realizations(
-                                            state, k, src2, dst2,
-                                            virtual_release=(info['placement'], info['route_links'])
-                                        )
-                                        if reals:
-                                            raw = select_best(reals, state, k)
-                                            pl, ph, lk, dl = raw[0], raw[1], raw[2], raw[3]
-                                            state.commit_realization(
-                                                rid, k, pl, lk, info['release_time'], history
-                                            )
-                                            downgrades += 1
-                                            break
+                        elif k_cur > a_t:
+                            # ── FIX: Hysteresis — downgrade only after TAU_H seconds ──
+                            # The lower attack state must have persisted continuously
+                            # for at least TAU_H=10s before a downgrade is allowed.
+                            # Check that ALL readings in the last TAU_H seconds are <= a_t.
+                            recent = [(ts2, a2) for (ts2, a2) in history if ts2 >= t - TAU_H]
+                            if not recent:
+                                continue
+                            # Need TAU_H seconds of history to have accumulated
+                            earliest_recent = min(ts2 for (ts2, _) in recent)
+                            window_duration = t - earliest_recent
+                            if window_duration < TAU_H:
+                                continue  # not enough history yet
+
+                            max_recent_a = max(a2 for (_, a2) in recent)
+                            if max_recent_a >= k_cur:
+                                continue  # attack was high recently — no downgrade
+
+                            Wr = [k for k in range(k_cur) if k >= max_recent_a]
+                            src2 = self.nodes[0]; dst2 = self.nodes[-1]
+                            for k in Wr:
+                                reals = find_realizations(
+                                    state, k, src2, dst2,
+                                    virtual_release=(info['placement'], info['route_links'])
+                                )
+                                if reals:
+                                    raw = select_best(reals, state, k)
+                                    pl, ph, lk, dl = raw[0], raw[1], raw[2], raw[3]
+                                    old_k = k_cur
+                                    state.commit_realization(
+                                        rid, k, pl, lk, info['release_time'], history
+                                    )
+                                    downgrades += 1
+                                    transition_timestamps.append(
+                                        (t, old_k, k, 'downgrade')
+                                    )
+                                    break
+
+                # Determine dominant system profile at this timestep
+                if state.active:
+                    profiles_active = [info['profile_idx'] for info in state.active.values()]
+                    sys_profile = max(profiles_active)  # highest active profile
+                else:
+                    sys_profile = a_t  # no active requests — use attack state
 
                 # record profile distribution
                 for rid, info in state.active.items():
                     k = info['profile_idx']
                     profile_secs[k] += dt
+
+                # Per-second trace for Fig 4
+                profile_trace.append({
+                    't':               t,
+                    'eta':             round(eta, 4),
+                    'a_t':             a_t,
+                    'profile':         sys_profile,
+                    'active_requests': len(state.active),
+                })
 
                 t += dt
 
@@ -815,11 +982,15 @@ class Simulator:
             metrics = {
                 'upgrades':    upgrades,
                 'downgrades':  downgrades,
-                'blocked':     blocked,
+                'blocked':     blocked_count,
                 'profile_frac': {k: profile_secs[k]/total_profile for k in range(3)},
                 'mean_reconfig_delay': sum(reconfig_latencies)/len(reconfig_latencies) if reconfig_latencies else 0.0,
+                'transition_timestamps': transition_timestamps,
             }
             all_metrics.append(metrics)
+
+            if run == 0:
+                profile_trace_out = profile_trace
 
         # average
         result = {
@@ -831,6 +1002,10 @@ class Simulator:
                 for k in range(3)
             },
             'mean_reconfig_delay': sum(m['mean_reconfig_delay'] for m in all_metrics) / len(all_metrics),
+            # transition timestamps from run 0 (for Fig 4 validation)
+            'transition_timestamps': all_metrics[0]['transition_timestamps'],
+            # per-second profile trace from run 0 (for Fig 4)
+            'profile_trace': profile_trace_out,
         }
         return result
 
