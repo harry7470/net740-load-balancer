@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Scratch files
+page-*.jpg
+run_remaining.py
+
+# OS
+.DS_Store
