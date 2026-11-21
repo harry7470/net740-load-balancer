@@ -1,0 +1,99 @@
+{
+  "experiment": {
+    "description": "AALB vs baselines — matched-trace simulation, NET 470 Fall 2026",
+    "duration_s": 30,
+    "runs": 3,
+    "legitimate_rates_req_s": [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+    "attack_rate_req_s": 50,
+    "random_seed_base": 42
+  },
+  "topology": {
+    "name": "NSFNET-14",
+    "nodes": 14,
+    "links": 21,
+    "description": "14-node NSFNET simulated topology with bidirectional links"
+  },
+  "security_profiles": {
+    "K0": {
+      "name": "LB",
+      "vnfs": ["LoadBalancer"],
+      "cpu_cost": 0.10,
+      "processing_delay_ms": 1,
+      "description": "Lightweight load balancing only — used at low attack intensity"
+    },
+    "K1": {
+      "name": "RF+LB",
+      "vnfs": ["RateFilter", "LoadBalancer"],
+      "cpu_cost": 0.25,
+      "processing_delay_ms": 3,
+      "description": "Rate filtering + load balancing — used at moderate attack intensity"
+    },
+    "K2": {
+      "name": "FW+RF+LB",
+      "vnfs": ["Firewall", "RateFilter", "LoadBalancer"],
+      "cpu_cost": 0.45,
+      "processing_delay_ms": 6,
+      "description": "Full security chain — used at high attack intensity"
+    }
+  },
+  "sla": {
+    "delay_bound_ms": 20,
+    "description": "Maximum acceptable mean end-to-end delay"
+  },
+  "methods": {
+    "aalb": {
+      "description": "Adaptive K0/K1/K2 selection based on attack intensity eta(t)",
+      "profile_selection": "adaptive",
+      "placement": "least-connections"
+    },
+    "rr_sfc": {
+      "description": "Fixed K2 with round-robin node placement (heuristic baseline)",
+      "profile_selection": "fixed_K2",
+      "placement": "round-robin"
+    },
+    "lc_sfc": {
+      "description": "Fixed K2 with least-CPU node placement (heuristic baseline)",
+      "profile_selection": "fixed_K2",
+      "placement": "least-cpu"
+    },
+    "original_aalb": {
+      "description": "Fixed K1 surrogate for original AALB (heuristic baseline)",
+      "profile_selection": "fixed_K1",
+      "placement": "least-connections"
+    }
+  },
+  "node_resources": {
+    "cpu_capacity_per_node": 1.0,
+    "memory_capacity_per_node": 1.0,
+    "link_bandwidth_capacity": 1.0
+  },
+  "attack_model": {
+    "type": "Poisson",
+    "description": "Independent Poisson attack stream, fixed rate, exogenous attack-state schedule",
+    "note": "Attack state (eta) transitions are exogenous, not inferred from traffic stream"
+  },
+  "metrics_reported": [
+    "admission_rate_pct",
+    "completed_throughput_req_s",
+    "mean_e2e_delay_ms",
+    "cpu_utilization_pct",
+    "security_termination_rate_pct",
+    "security_compliant_completion_rate_pct",
+    "mandatory_upgrade_success_rate_pct"
+  ],
+  "visualization": {
+    "palette": "Wong colorblind-safe",
+    "colors": {
+      "aalb": "#0072B2",
+      "rr_sfc": "#E69F00",
+      "lc_sfc": "#009E73",
+      "original_aalb": "#CC79A7"
+    },
+    "markers": {
+      "aalb": "circle",
+      "rr_sfc": "square",
+      "lc_sfc": "triangle",
+      "original_aalb": "diamond"
+    }
+  }
+}
