@@ -1,0 +1,362 @@
+{
+  "100_aalb": {
+    "admission_rate_pct": 80.92677980033106,
+    "completed_throughput_req_s": 79.7,
+    "mean_e2e_delay_ms": 11.378735036193689,
+    "cpu_utilization_pct": 11.794945159972416,
+    "security_termination_rate_pct": 0.2797714848472967,
+    "security_compliant_completion_rate_pct": 99.88815575130702,
+    "mandatory_upgrade_success_rate_pct": 72.29166666666667
+  },
+  "100_rr_sfc": {
+    "admission_rate_pct": 45.07434312501999,
+    "completed_throughput_req_s": 44.53333333333333,
+    "mean_e2e_delay_ms": 18.19836124226806,
+    "cpu_utilization_pct": 14.727900793126524,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "100_lc_sfc": {
+    "admission_rate_pct": 17.35314230986156,
+    "completed_throughput_req_s": 17.177777777777777,
+    "mean_e2e_delay_ms": 18.844605960213702,
+    "cpu_utilization_pct": 5.623095983049885,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "100_original_aalb": {
+    "admission_rate_pct": 95.72990291322022,
+    "completed_throughput_req_s": 94.60000000000001,
+    "mean_e2e_delay_ms": 14.676711573752888,
+    "cpu_utilization_pct": 17.067766681375343,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.76052656960172,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "200_aalb": {
+    "admission_rate_pct": 79.20926429763693,
+    "completed_throughput_req_s": 157.0111111111111,
+    "mean_e2e_delay_ms": 11.460741281306023,
+    "cpu_utilization_pct": 20.831588303346667,
+    "security_termination_rate_pct": 0.21804095129262824,
+    "security_compliant_completion_rate_pct": 99.96469845483665,
+    "mandatory_upgrade_success_rate_pct": 69.21034439416792
+  },
+  "200_rr_sfc": {
+    "admission_rate_pct": 45.97953759750934,
+    "completed_throughput_req_s": 91.4888888888889,
+    "mean_e2e_delay_ms": 18.19968780683501,
+    "cpu_utilization_pct": 29.6009386766348,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "200_lc_sfc": {
+    "admission_rate_pct": 17.50717955432892,
+    "completed_throughput_req_s": 34.833333333333336,
+    "mean_e2e_delay_ms": 19.131860593922116,
+    "cpu_utilization_pct": 11.232432635686559,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "200_original_aalb": {
+    "admission_rate_pct": 95.43385437715608,
+    "completed_throughput_req_s": 189.7777777777778,
+    "mean_e2e_delay_ms": 14.871294969829359,
+    "cpu_utilization_pct": 33.94038537124505,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.39169056836549,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "300_aalb": {
+    "admission_rate_pct": 79.21593847257425,
+    "completed_throughput_req_s": 235.04444444444445,
+    "mean_e2e_delay_ms": 11.604504471868653,
+    "cpu_utilization_pct": 31.043285773489895,
+    "security_termination_rate_pct": 0.3333898714430516,
+    "security_compliant_completion_rate_pct": 99.94813302011742,
+    "mandatory_upgrade_success_rate_pct": 66.48632055561951
+  },
+  "300_rr_sfc": {
+    "admission_rate_pct": 45.22778928487151,
+    "completed_throughput_req_s": 134.66666666666666,
+    "mean_e2e_delay_ms": 18.29305635438391,
+    "cpu_utilization_pct": 43.79435495943224,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "300_lc_sfc": {
+    "admission_rate_pct": 19.441275340539082,
+    "completed_throughput_req_s": 57.96666666666667,
+    "mean_e2e_delay_ms": 19.25534608384615,
+    "cpu_utilization_pct": 18.849478989946647,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "300_original_aalb": {
+    "admission_rate_pct": 94.67212475467814,
+    "completed_throughput_req_s": 282.0444444444444,
+    "mean_e2e_delay_ms": 15.262375114825419,
+    "cpu_utilization_pct": 51.20214662260809,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.5201325184615,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "400_aalb": {
+    "admission_rate_pct": 79.25352451602718,
+    "completed_throughput_req_s": 315.0555555555556,
+    "mean_e2e_delay_ms": 11.702248528477341,
+    "cpu_utilization_pct": 40.14826058404034,
+    "security_termination_rate_pct": 0.32933127454670724,
+    "security_compliant_completion_rate_pct": 99.94696375213518,
+    "mandatory_upgrade_success_rate_pct": 64.21092646899099
+  },
+  "400_rr_sfc": {
+    "admission_rate_pct": 45.67034774660323,
+    "completed_throughput_req_s": 182.29999999999998,
+    "mean_e2e_delay_ms": 18.542194389050966,
+    "cpu_utilization_pct": 59.0902372910827,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "400_lc_sfc": {
+    "admission_rate_pct": 22.072362985055733,
+    "completed_throughput_req_s": 88.12222222222222,
+    "mean_e2e_delay_ms": 19.586833950110044,
+    "cpu_utilization_pct": 28.839865108320293,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "400_original_aalb": {
+    "admission_rate_pct": 93.65003374158817,
+    "completed_throughput_req_s": 373.8333333333333,
+    "mean_e2e_delay_ms": 15.612731263985909,
+    "cpu_utilization_pct": 67.34477983550597,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.71792110018981,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "500_aalb": {
+    "admission_rate_pct": 77.7378837843447,
+    "completed_throughput_req_s": 384.78888888888895,
+    "mean_e2e_delay_ms": 11.727985262626392,
+    "cpu_utilization_pct": 48.49476462352729,
+    "security_termination_rate_pct": 0.2978605801082141,
+    "security_compliant_completion_rate_pct": 99.96237134786399,
+    "mandatory_upgrade_success_rate_pct": 62.65684669939989
+  },
+  "500_rr_sfc": {
+    "admission_rate_pct": 42.99782512175258,
+    "completed_throughput_req_s": 213.68888888888887,
+    "mean_e2e_delay_ms": 19.103262241075917,
+    "cpu_utilization_pct": 69.84123394997307,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "500_lc_sfc": {
+    "admission_rate_pct": 22.74263797666292,
+    "completed_throughput_req_s": 112.93333333333334,
+    "mean_e2e_delay_ms": 20.062554938645015,
+    "cpu_utilization_pct": 37.379506183462304,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "500_original_aalb": {
+    "admission_rate_pct": 87.42903154635299,
+    "completed_throughput_req_s": 434.4666666666667,
+    "mean_e2e_delay_ms": 15.854943266628723,
+    "cpu_utilization_pct": 78.83365314475556,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.58604672775334,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "600_aalb": {
+    "admission_rate_pct": 75.34921940711473,
+    "completed_throughput_req_s": 449.82222222222225,
+    "mean_e2e_delay_ms": 11.702069954778835,
+    "cpu_utilization_pct": 55.91791581014433,
+    "security_termination_rate_pct": 0.3774697647274914,
+    "security_compliant_completion_rate_pct": 99.9677858016557,
+    "mandatory_upgrade_success_rate_pct": 56.65647298674821
+  },
+  "600_rr_sfc": {
+    "admission_rate_pct": 39.79440817003775,
+    "completed_throughput_req_s": 238.6,
+    "mean_e2e_delay_ms": 19.777025027131877,
+    "cpu_utilization_pct": 78.30018277764334,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "600_lc_sfc": {
+    "admission_rate_pct": 22.4880096145512,
+    "completed_throughput_req_s": 134.92222222222222,
+    "mean_e2e_delay_ms": 20.566454618363384,
+    "cpu_utilization_pct": 44.19472755780848,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "600_original_aalb": {
+    "admission_rate_pct": 77.23115901579641,
+    "completed_throughput_req_s": 463.1333333333334,
+    "mean_e2e_delay_ms": 15.955129510387785,
+    "cpu_utilization_pct": 83.86509903133391,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.57107975534886,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "700_aalb": {
+    "admission_rate_pct": 72.82260940772402,
+    "completed_throughput_req_s": 503.68888888888887,
+    "mean_e2e_delay_ms": 11.593988065788977,
+    "cpu_utilization_pct": 61.41151405650121,
+    "security_termination_rate_pct": 0.37390351037768754,
+    "security_compliant_completion_rate_pct": 99.9801277676753,
+    "mandatory_upgrade_success_rate_pct": 54.184544567005396
+  },
+  "700_rr_sfc": {
+    "admission_rate_pct": 36.261916618488996,
+    "completed_throughput_req_s": 252.07777777777778,
+    "mean_e2e_delay_ms": 20.17584164331831,
+    "cpu_utilization_pct": 82.25700590879737,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "700_lc_sfc": {
+    "admission_rate_pct": 21.74526294943745,
+    "completed_throughput_req_s": 151.20000000000002,
+    "mean_e2e_delay_ms": 20.921110651759893,
+    "cpu_utilization_pct": 49.813783291376446,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "700_original_aalb": {
+    "admission_rate_pct": 68.26857107180591,
+    "completed_throughput_req_s": 474.56666666666666,
+    "mean_e2e_delay_ms": 16.089603175415665,
+    "cpu_utilization_pct": 86.262223072905,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.42610939337392,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "800_aalb": {
+    "admission_rate_pct": 70.91000917236461,
+    "completed_throughput_req_s": 562.3888888888888,
+    "mean_e2e_delay_ms": 11.626124508687168,
+    "cpu_utilization_pct": 67.87546841529301,
+    "security_termination_rate_pct": 0.37830092934561127,
+    "security_compliant_completion_rate_pct": 99.96249221834093,
+    "mandatory_upgrade_success_rate_pct": 52.44766505636071
+  },
+  "800_rr_sfc": {
+    "admission_rate_pct": 32.72327266625165,
+    "completed_throughput_req_s": 260.77777777777777,
+    "mean_e2e_delay_ms": 20.73488774114429,
+    "cpu_utilization_pct": 85.79176030254332,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "800_lc_sfc": {
+    "admission_rate_pct": 22.14425934913152,
+    "completed_throughput_req_s": 176.5111111111111,
+    "mean_e2e_delay_ms": 21.763600997474796,
+    "cpu_utilization_pct": 57.720705577101654,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "800_original_aalb": {
+    "admission_rate_pct": 60.6747069985965,
+    "completed_throughput_req_s": 483.5111111111111,
+    "mean_e2e_delay_ms": 16.164880703817953,
+    "cpu_utilization_pct": 87.50532720817326,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.70353862414298,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "900_aalb": {
+    "admission_rate_pct": 68.78249318935458,
+    "completed_throughput_req_s": 615.4444444444445,
+    "mean_e2e_delay_ms": 11.539186106574794,
+    "cpu_utilization_pct": 72.00233609901231,
+    "security_termination_rate_pct": 0.36861718362176604,
+    "security_compliant_completion_rate_pct": 99.96570320080595,
+    "mandatory_upgrade_success_rate_pct": 49.18845758215581
+  },
+  "900_rr_sfc": {
+    "admission_rate_pct": 29.525228222372707,
+    "completed_throughput_req_s": 265.5777777777778,
+    "mean_e2e_delay_ms": 21.2055015104533,
+    "cpu_utilization_pct": 87.9388849820911,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "900_lc_sfc": {
+    "admission_rate_pct": 21.80829315913083,
+    "completed_throughput_req_s": 195.9777777777778,
+    "mean_e2e_delay_ms": 22.486874923046983,
+    "cpu_utilization_pct": 64.4303178897241,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "900_original_aalb": {
+    "admission_rate_pct": 54.22300457174172,
+    "completed_throughput_req_s": 487.7777777777778,
+    "mean_e2e_delay_ms": 16.20450611309052,
+    "cpu_utilization_pct": 88.19386020045455,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.64976283940028,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "1000_aalb": {
+    "admission_rate_pct": 65.79518354555825,
+    "completed_throughput_req_s": 652.0555555555555,
+    "mean_e2e_delay_ms": 11.522125490529755,
+    "cpu_utilization_pct": 76.64903617990957,
+    "security_termination_rate_pct": 0.4019576423665794,
+    "security_compliant_completion_rate_pct": 99.97782032859406,
+    "mandatory_upgrade_success_rate_pct": 45.980482914521644
+  },
+  "1000_rr_sfc": {
+    "admission_rate_pct": 27.089973168953986,
+    "completed_throughput_req_s": 269.93333333333334,
+    "mean_e2e_delay_ms": 21.415453737204377,
+    "cpu_utilization_pct": 89.13617188642682,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "1000_lc_sfc": {
+    "admission_rate_pct": 21.014332392263746,
+    "completed_throughput_req_s": 209.4777777777778,
+    "mean_e2e_delay_ms": 22.681579085887858,
+    "cpu_utilization_pct": 69.10258215564262,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 100.0,
+    "mandatory_upgrade_success_rate_pct": null
+  },
+  "1000_original_aalb": {
+    "admission_rate_pct": 49.09265226734288,
+    "completed_throughput_req_s": 489.21111111111105,
+    "mean_e2e_delay_ms": 16.183911022956732,
+    "cpu_utilization_pct": 88.67746069121449,
+    "security_termination_rate_pct": 0.0,
+    "security_compliant_completion_rate_pct": 74.4590036254678,
+    "mandatory_upgrade_success_rate_pct": null
+  }
+}
