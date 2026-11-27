@@ -9,3 +9,5 @@ run_remaining.py
 
 # OS
 .DS_Store
+simulation/gen_arch_fig_v2.py
+simulation/gen_arch_fig_v3.py

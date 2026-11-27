@@ -193,13 +193,14 @@ net740-load-balancer/
 ├── simulation/
 │   ├── simulator.py              # Core simulation engine (AALB, RR-SFC, LC-SFC, Orig-AALB)
 │   ├── run_experiments.py        # Main experiment runner (load sweeps + attack traces)
-│   ├── generate_figures.py       # Figure generation script (figs 1–4)
-│   ├── generate_figures_v2.py    # Updated figure generation (admission-based throughput label)
+│   ├── run_remaining.py          # Extended diagnostic runner (security metrics)
 │   ├── gen_arch_fig_v4.py        # Architecture diagram generator (final version)
 │   └── validate_hysteresis.py    # Hysteresis adaptation validation
 ├── results/
-│   └── results.json              # Experimental results (JSON, keyed by method and rate)
-├── figures/                      # Generated figures directory
+│   ├── results.json              # Experimental results (JSON, keyed by method and rate)
+│   ├── raw_per_run.csv           # Per-run diagnostic data (security metric figures)
+│   └── averaged_data.json        # Pre-averaged results summary
+├── figures/                      # Generated figures (8 PNG/PDF files)
 ├── paper/                        # LaTeX source for research report
 ├── requirements.txt              # Python dependencies
 ├── README.md                     # This file
@@ -367,11 +368,7 @@ This confirms that security-profile downgrades occur only after the lower attack
 
 ## 14. Regenerating Experimental Figures
 
-```bash
-python simulation/generate_figures_v2.py
-```
-
-This regenerates Figures 2–5 (admission rate, throughput, delay, CPU) from `results/results.json`.
+Performance figures (admission rate, throughput, delay, CPU utilization) are generated from `results/results.json` by `run_remaining.py`, which also writes `results/raw_per_run.csv` used for security metric figures. The architecture diagram is generated separately.
 
 To regenerate the architecture diagram:
 
@@ -383,16 +380,16 @@ Output is written to the `figures/` directory.
 
 ### Report Figure Mapping
 
-| Report Figure | Filename | Script |
+| Report Figure | Filename | Source |
 |---|---|---|
-| Figure 1 — System architecture | fig_architecture.pdf | gen_arch_fig_v4.py |
-| Figure 2 — Legitimate admission rate | fig1_admission_rate.png | generate_figures_v2.py |
-| Figure 3 — Admission-based throughput | fig2_throughput.png | generate_figures_v2.py |
-| Figure 4 — End-to-end delay | fig3_delay.png | generate_figures_v2.py |
-| Figure 5 — CPU utilization | fig4_cpu.png | generate_figures_v2.py |
-| Figure 6 — Security-triggered termination | fig5_security_termination.png | (from raw_per_run.csv) |
-| Figure 7 — Security-compliant completion | fig6_compliant_completion.png | (from raw_per_run.csv) |
-| Figure 8 — Mandatory upgrade success | fig7_upgrade_success.png | (from raw_per_run.csv) |
+| Figure 1 — System architecture | fig_architecture.png | gen_arch_fig_v4.py |
+| Figure 2 — Legitimate admission rate | fig1_admission_rate.png | results/results.json |
+| Figure 3 — Admission-based throughput | fig2_throughput.png | results/results.json |
+| Figure 4 — End-to-end delay | fig3_delay.png | results/results.json |
+| Figure 5 — CPU utilization | fig4_cpu.png | results/results.json |
+| Figure 6 — Security-triggered termination | fig5_security_termination.png | results/raw_per_run.csv |
+| Figure 7 — Security-compliant completion | fig6_compliant_completion.png | results/raw_per_run.csv |
+| Figure 8 — Mandatory upgrade success | fig7_upgrade_success.png | results/raw_per_run.csv |
 
 Figure numbering is generated automatically by LaTeX and is not embedded in plot titles.
 
@@ -437,10 +434,9 @@ An independent reviewer should be able to:
 
 1. Clone the public repository.
 2. Install all required dependencies.
-3. Run `python simulation/run_experiments.py`.
-4. Run `python simulation/run_remaining.py`.
-5. Run `python simulation/generate_figures_v2.py`.
-6. Compare the generated figures with those in the final research report.
+3. Run `python simulation/run_experiments.py` to produce `results/results.json`.
+4. Run `python simulation/run_remaining.py` to produce `results/raw_per_run.csv`.
+5. Compare the figures in `figures/` with those in the final research report.
 
 ---
 
