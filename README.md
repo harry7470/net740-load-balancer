@@ -387,9 +387,12 @@ Output is written to the `figures/` directory.
 | Figure 3 — Admission-based throughput | fig2_throughput.png | results/results.json |
 | Figure 4 — End-to-end delay | fig3_delay.png | results/results.json |
 | Figure 5 — CPU utilization | fig4_cpu.png | results/results.json |
-| Figure 6 — Security-triggered termination | fig5_security_termination.png | results/raw_per_run.csv |
-| Figure 7 — Security-compliant completion | fig6_compliant_completion.png | results/raw_per_run.csv |
-| Figure 8 — Mandatory upgrade success | fig7_upgrade_success.png | results/raw_per_run.csv |
+| Figure 6 — Profile transitions (attack traces) | fig5_profile_transitions.png | results/raw_per_run.csv |
+| Figure 7 — Security-triggered termination rate | fig6_security_termination.png | results/raw_per_run.csv |
+| Figure 8 — Hysteresis interval sensitivity | fig7_hysteresis.png | results/raw_per_run.csv |
+| Figure 9 — Security-compliant completion rate | fig8_compliant_completion.png | results/raw_per_run.csv |
+| Figure 10 — Rejection breakdown at 600 req/s | fig9_rejections.png | results/raw_per_run.csv |
+| Figure 11 — Mandatory upgrade success rate | fig10_upgrade_success.png | results/raw_per_run.csv |
 
 Figure numbering is generated automatically by LaTeX and is not embedded in plot titles.
 
@@ -409,10 +412,10 @@ Reported numerical values are consistent across raw experimental data, generated
 
 | Method | Admission Rate | Throughput | Delay | CPU |
 |---|---:|---:|---:|---:|
-| AALB | 66.0% | 578.8 req/s | 12.2 ms | 75.3% |
-| RR-SFC | 25.9% | 249.8 req/s | 21.1 ms | 88.8% |
-| LC-SFC | 23.1% | 221.5 req/s | 22.7 ms | 75.2% |
-| Original AALB | 51.3% | 497.0 req/s | 16.1 ms | 88.3% |
+| AALB | 65.8% | 652 req/s | 11.7 ms | 76.6% |
+| RR-SFC | 27.1% | 270 req/s | 21.4 ms | 89.1% |
+| LC-SFC | 21.0% | 210 req/s | 22.7 ms | 69.1% |
+| Original AALB | 49.1% | 489 req/s | 16.2 ms | 88.7% |
 
 ---
 
