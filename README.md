@@ -209,7 +209,7 @@ net740-load-balancer/
 Raw per-run diagnostic data used for security metric figures is located at:
 
 ```
-results/extended_diagnostic/raw_per_run.csv
+results/raw_per_run.csv
 ```
 
 ---
@@ -273,7 +273,7 @@ For the extended diagnostic data used to generate security metric figures, run:
 python simulation/run_remaining.py
 ```
 
-Output is written to `results/extended_diagnostic/raw_per_run.csv`.
+Output is written to `results/raw_per_run.csv`.
 
 ---
 
@@ -431,7 +431,7 @@ To reproduce the reported experiments:
 | Random seed | 42 |
 | Independent trials | 3 per experimental point |
 | Results file | results/results.json |
-| Raw diagnostic data | results/extended_diagnostic/raw_per_run.csv |
+| Raw diagnostic data | results/raw_per_run.csv |
 
 An independent reviewer should be able to:
 
