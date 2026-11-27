@@ -1,160 +1,469 @@
 # Attack-Aware Adaptive Security Service Orchestration for DDoS-Resilient Fog Networks
 
-**NET 470 / NET 740 — Project 7**  
-Harsh Patel & Nimrah Ashraf — DePaul University, School of Computing
+**NET 470 / NET 740 — Project 7**
+
+**Authors:** Harsh Patel and Nimrah Ashraf  
+**Institution:** DePaul University, School of Computing  
+**Course:** Cloud Networking Technologies  
+**Date:** November 2026
 
 ---
 
-## Overview
+## 1. Project Overview
 
-This repository contains the complete simulation implementation and experimental artifacts for the paper:
+This project presents an Attack-Aware Adaptive Load Balancing (AALB) framework for security service function chain (SFC) orchestration in network function virtualization (NFV)-enabled fog networks.
 
-> *Attack-Aware Adaptive Security Service Orchestration for DDoS-Resilient Fog Networks*
+The proposed framework dynamically selects security profiles according to changing distributed denial-of-service (DDoS) attack intensity while preserving computational and network resources for legitimate service requests.
 
-The proposed **AALB (Attack-Aware Adaptive Load Balancer)** framework dynamically adapts the active security service function chain (SFC) in an NFV-enabled fog network based on real-time DDoS attack-state estimation. Three bounded security profiles — K0 ⟨LB⟩, K1 ⟨RF, LB⟩, K2 ⟨FW, RF, LB⟩ — are selected to minimize a normalized delay-load cost while satisfying resource and SLA constraints. Security upgrades are immediate; downgrades are stabilized by a hysteresis holding interval (τH = 10 s).
+The primary objectives are to:
 
----
-
-## Repository Structure
-
-```
-├── simulation/
-│   ├── simulator.py              # Core discrete-event simulator
-│   │                             #   NSFNET topology, VNF placement, SFC admission,
-│   │                             #   reconfiguration, hysteresis, profile-transition logging
-│   ├── run_experiments.py        # Full experiment runner (static + reconfiguration)
-│   ├── generate_figures.py       # Reproduces all paper figures (Figs 1–6) and LaTeX tables
-│   ├── gen_arch_fig.py           # Architecture diagram generator (Fig 1 — legacy)
-│   └── validate_hysteresis.py    # Standalone hysteresis validation script
-├── results/
-│   ├── results.json              # All measured experiment outputs
-│   │                             #   - static: 4 methods × 5 η × 11 req rates
-│   │                             #   - reconfig: Trace A & B × 4 methods
-│   │                             #   - transition_timestamps per run (for hysteresis validation)
-│   │                             #   - profile_trace per second (for timeline plots)
-│   │                             #   - params: all configuration values
-│   └── figures/
-│       ├── fig1_admission_rate.{png,pdf}
-│       ├── fig2_throughput.{png,pdf}
-│       ├── fig3_delay.{png,pdf}
-│       ├── fig4_utilization.{png,pdf}
-│       ├── fig5_saturation.{png,pdf}
-│       ├── fig6_reconfig.{png,pdf}
-│       ├── fig_architecture.{png,pdf}   # IEEE-format architecture figure
-│       ├── table1_admission.tex
-│       ├── table2_utilization.tex
-│       └── table3_reconfig.tex
-└── paper/
-    └── Project7_AttackAware_AALB.docx   # Full IEEE-format paper (source)
-```
+- Improve legitimate request admission under increasing network loads.
+- Maintain resource-feasible and delay-aware VNF placement.
+- Adapt security profiles according to attack intensity.
+- Reduce unnecessary security-profile transitions through hysteresis.
+- Preserve security compliance while efficiently utilizing available fog resources.
 
 ---
 
-## Simulation Parameters
+## 2. System Architecture
+
+The proposed architecture consists of:
+
+- Legitimate traffic sources.
+- Malicious DDoS traffic sources.
+- An ingress fog node with an independent monitoring function.
+- A logically centralized AALB controller.
+- Distributed NFV-enabled fog nodes.
+- A destination service.
+
+The controller evaluates attack intensity, selects an appropriate security profile, and determines feasible VNF placement and traffic routing.
+
+All VNFs belonging to a selected security profile are assigned to a single fog node.
+
+Placement decisions consider:
+
+- CPU availability.
+- Memory availability.
+- Link bandwidth.
+- End-to-end delay constraints.
+- Minimum security requirements.
+
+The simulator discards malicious requests at ingress under K1 and K2 profiles before fog-node resource allocation. Under K0 (no attack filter), malicious traffic is admitted alongside legitimate traffic. Consequently, the experiments evaluate legitimate service performance under attack-dependent security requirements.
+
+---
+
+## 3. Security Profiles
+
+| Profile | Attack State | VNF Sequence |
+|---|---|---|
+| K0 | Low | LB |
+| K1 | Moderate | RF → LB |
+| K2 | Severe | FW → RF → LB |
+
+### Abbreviations
+
+- LB: Load Balancer
+- RF: Rate Filter
+- FW: Firewall
+- VNF: Virtual Network Function
+- NFV: Network Function Virtualization
+- SFC: Service Function Chaining
+- SLA: Service-Level Agreement
+
+### Security Adaptation
+
+The framework immediately increases the active security profile when stronger protection is required.
+
+Downgrades occur only after the lower attack state persists continuously for the configured hysteresis holding interval.
+
+Existing sessions may be subject to mandatory security upgrades when the active profile changes. Sessions that cannot be upgraded are security-terminated. These behaviors are implemented in `simulation/simulator.py`.
+
+---
+
+## 4. Simulation Parameters
+
+The following parameters correspond to Table I of the research report.
 
 | Parameter | Value |
 |---|---|
-| Topology | NSFNET — 14 nodes, 21 bidirectional links |
-| Node CPU capacity | 1 core per node |
-| Node memory capacity | 1024 MB per node |
-| Link capacity | 100 Mbps |
-| Link propagation delay | 2 ms |
-| Request arrival rate ν | {50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800} req/s |
-| Attack ratio η | {0.0, 0.2, 0.4, 0.7, 0.8} |
-| Attack thresholds | τ₁ = 0.30, τ₂ = 0.60 |
-| Hysteresis holding interval | τH = 10 s |
-| Cost weight | α = 0.6 |
-| Run duration (static) | 120 s × 3 independent runs |
-| Run duration (reconfig) | 120 s × 5 independent runs |
+| Network topology | NSFNET |
+| Number of nodes | 14 |
+| Number of communication links | 21 |
+| Node CPU capacity | Uniform distribution [0.8, 1.2] units |
+| Node memory capacity | Uniform distribution [256, 384] MB |
+| Link bandwidth | Uniform distribution [80, 120] Mbps |
+| Legitimate arrival rate | 100–1,000 requests/s |
+| Arrival-rate increment | 100 requests/s |
+| Malicious arrival rate | Attack intensity × legitimate arrival rate |
+| Load-sweep attack intensity | 0.4 |
+| Attack Trace A peak intensity | 0.4 |
+| Attack Trace B peak intensity | 0.75 |
+| Attack-trace legitimate arrival rate | 300 requests/s |
+| Request bandwidth | 0.5 Mbps |
+| Simulator service rate | 5 requests/s |
+| Delay admission bound | 20 ms |
+| Lower attack threshold | 0.30 |
+| Upper attack threshold | 0.60 |
+| Hysteresis holding intervals | 0, 5, 10, 20 seconds |
+| Placement weight (alpha) | 0.6 |
+| Load-sweep duration | 30 seconds |
+| Attack-trace duration | 120 seconds |
+| Random seed | 42 |
+| Independent trials | 3 per experimental point |
 
-### Security Profiles
+Legitimate and malicious traffic are generated using independent Poisson arrival processes.
 
-| Profile | VNF Chain | VNFs | Total Processing Delay |
-|---|---|---|---|
-| K0 | ⟨LB⟩ | cpu=0.10, mem=128 MB, 1 ms | 1 ms |
-| K1 | ⟨RF, LB⟩ | RF: cpu=0.15, mem=128 MB, 2 ms | 3 ms |
-| K2 | ⟨FW, RF, LB⟩ | FW: cpu=0.20, mem=192 MB, 3 ms | 6 ms |
-
-K0 provides **no attack filtering**. Only K1 and K2 can identify and discard attack traffic.
-
-### Comparison Methods
-
-| Method | Profile | Placement |
-|---|---|---|
-| RR-SFC | Static K2 (always) | Round-robin |
-| LC-SFC | Static K2 (always) | Least-loaded |
-| Original AALB | Adaptive, K1 minimum | Min-cost feasible |
-| **AALB (proposed)** | **Adaptive K0/K1/K2** | **Min-cost feasible** |
+Node and link capacities are sampled at the beginning of each trial and remain fixed throughout that trial.
 
 ---
 
-## Reproducing the Experiments
+## 5. Security VNF Resource Parameters
+
+The following resource requirements correspond to Table II of the research report.
+
+| VNF | CPU (units) | Memory (MB) | Processing Delay (ms) |
+|---|---:|---:|---:|
+| LB | 0.10 | 24 | 1 |
+| RF | 0.15 | 32 | 2 |
+| FW | 0.20 | 48 | 3 |
+
+### Aggregate Security Profile Requirements
+
+| Profile | CPU (units) | Memory (MB) | Processing Delay (ms) |
+|---|---:|---:|---:|
+| K0 | 0.10 | 24 | 1 |
+| K1 | 0.25 | 56 | 3 |
+| K2 | 0.45 | 104 | 6 |
+
+---
+
+## 6. Baseline Configurations
+
+Four configurations are evaluated.
+
+| Method | Security Profile | Placement Policy |
+|---|---|---|
+| AALB (Proposed) | Adaptive K0, K1, K2 | Minimum-cost feasible placement |
+| RR-SFC | Fixed K2 | Round-robin placement |
+| LC-SFC | Fixed K2 | Least-loaded placement |
+| Original AALB | Fixed K1 | Minimum-cost feasible placement |
+
+The proposed AALB framework combines attack-aware security-profile selection with resource- and delay-aware placement.
+
+Comparisons with fixed-K2 methods reflect differences in both security resource requirements and placement policies.
+
+---
+
+## 7. Mathematical Formulation
+
+The controller minimizes a weighted placement cost:
+
+```
+J(n,t) = alpha × D(Pn,t)/delta_r
+       + (1-alpha) × (rho_n(t) + c_k/C_n)
+```
+
+Where:
+
+- n: Candidate fog node.
+- t: Current simulation time.
+- D(Pn,t): Estimated end-to-end delay.
+- delta_r: Request-specific delay bound (20 ms).
+- rho_n(t): Current modeled CPU utilization.
+- c_k: CPU demand of the selected security profile.
+- C_n: Total CPU capacity of the candidate fog node.
+- alpha: Relative weighting of delay and CPU load (0.6).
+
+Estimated end-to-end delay consists of:
+
+- Network propagation delay.
+- VNF processing delay.
+- Estimated queuing delay.
+
+Candidate routes are computed using Dijkstra's shortest-path algorithm.
+
+Only feasible candidates are considered for minimum-cost placement under the proposed admission policy.
+
+---
+
+## 8. Repository Structure
+
+```
+net740-load-balancer/
+├── simulation/
+│   ├── simulator.py              # Core simulation engine (AALB, RR-SFC, LC-SFC, Orig-AALB)
+│   ├── run_experiments.py        # Main experiment runner (load sweeps + attack traces)
+│   ├── generate_figures.py       # Figure generation script (figs 1–4)
+│   ├── generate_figures_v2.py    # Updated figure generation (admission-based throughput label)
+│   ├── gen_arch_fig_v4.py        # Architecture diagram generator (final version)
+│   └── validate_hysteresis.py    # Hysteresis adaptation validation
+├── results/
+│   └── results.json              # Experimental results (JSON, keyed by method and rate)
+├── figures/                      # Generated figures directory
+├── paper/                        # LaTeX source for research report
+├── requirements.txt              # Python dependencies
+├── README.md                     # This file
+└── .gitignore
+```
+
+Raw per-run diagnostic data used for security metric figures is located at:
+
+```
+results/extended_diagnostic/raw_per_run.csv
+```
+
+---
+
+## 9. Installation
 
 ### Prerequisites
 
+- Python 3.9 or later (tested with Python 3.13)
+- Git
+- pip
+
+### Clone the Repository
+
 ```bash
-pip install -r requirements.txt
-# numpy>=1.24, matplotlib>=3.7
+git clone https://github.com/harry7470/net740-load-balancer.git
+cd net740-load-balancer
 ```
 
-### Step 1 — Run all experiments
+### Create a Virtual Environment
+
+```bash
+python3 -m venv .venv
+```
+
+Activate the environment on macOS or Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Activate the environment on Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Dependencies: `numpy>=1.24`, `matplotlib>=3.7`
+
+---
+
+## 10. Running the Simulation
+
+Execute the main experiment runner from the repository root:
 
 ```bash
 python simulation/run_experiments.py
 ```
 
-This runs all static experiments (4 methods × 5 η × 11 req rates × 3 runs) and both
-reconfiguration traces (Trace A: mild; Trace B: severe) for all 4 methods × 5 runs each.
-Results are written to `results/results.json` with checkpointing after each η stripe
-(safe to interrupt and resume).
+This runs load-sweep experiments (λ = 100–1,000 req/s, η = 0.4) across all four evaluated configurations and saves results incrementally to `results/results.json`. The script prints a checkpoint message after each method/rate combination completes.
 
-Expected runtime: 15–30 minutes on a modern laptop.
+For the extended diagnostic data used to generate security metric figures, run:
 
-### Step 2 — Validate hysteresis
+```bash
+python simulation/run_remaining.py
+```
+
+Output is written to `results/extended_diagnostic/raw_per_run.csv`.
+
+---
+
+## 11. Experimental Methodology
+
+Each experimental point uses three independent trials with random seed 42.
+
+Experiments use controlled random seeds and comparable traffic and resource conditions across the evaluated configurations.
+
+### Load-Sweep Experiments
+
+- Legitimate arrival rates: 100–1,000 requests/s (100 req/s increments).
+- Attack intensity: 0.4.
+- Simulation duration: 30 seconds.
+- Independent trials: 3 per point.
+
+### Dynamic Attack-Trace Experiments
+
+- Legitimate arrival rate: 300 requests/s.
+- Trace A peak attack intensity: 0.4.
+- Trace B peak attack intensity: 0.75.
+- Simulation duration: 120 seconds.
+- Default holding interval for trace comparison: 10 seconds.
+
+### Hysteresis Sensitivity
+
+The evaluated holding intervals are:
+
+- 0 seconds.
+- 5 seconds.
+- 10 seconds.
+- 20 seconds.
+
+These experiments evaluate the relationship between security-profile stability and legitimate request admission.
+
+---
+
+## 12. Performance Metrics
+
+### Legitimate Admission Rate
+
+```
+Admission Rate (%) =
+    Admitted Legitimate Requests /
+    Arriving Legitimate Requests × 100
+```
+
+### Legitimate Admission-Based Throughput
+
+```
+Throughput (requests/s) =
+    Admitted Legitimate Requests /
+    Simulation Duration (seconds)
+```
+
+Admission-based throughput must not be confused with completed-request throughput.
+
+### Mean End-to-End Delay
+
+Mean modeled delay across admitted legitimate requests, expressed in milliseconds.
+
+### CPU Utilization
+
+Time-averaged reserved CPU resources relative to total fog-node CPU capacity.
+
+### Security-Profile Transitions
+
+Total recorded security-profile upgrades and downgrades.
+
+### Additional Security Metrics
+
+- **Security-triggered termination rate:** Percentage of admitted legitimate requests terminated due to a security-profile upgrade.
+- **Security-compliant completion rate:** Percentage of admitted legitimate requests that completed under the required security profile.
+- **Mandatory security-upgrade success rate (AALB only):** Percentage of mandatory upgrade attempts that succeeded. Baselines (RR-SFC, LC-SFC, Original AALB) operate on fixed profiles and do not perform upgrades; this metric is N/A for those methods.
+
+### Rejection Analysis
+
+Rejected legitimate requests are categorized according to the applicable resource or delay constraint.
+
+---
+
+## 13. Validating Hysteresis
 
 ```bash
 python simulation/validate_hysteresis.py
 ```
 
-Reads `results/results.json` and verifies that every recorded downgrade occurred only
-after the lower attack state had persisted continuously for ≥ τH = 10 s (eq. 9 of the
-paper). Prints a full gap table for both traces and exits 0 on pass, 1 on violation.
+This confirms that security-profile downgrades occur only after the lower attack state persists for the configured holding interval, consistent with Algorithm 2 of the research report.
 
-Expected output (confirming the paper's claim):
-```
-OVERALL: PASSED — all downgrades respect τH = 10 s holding interval
-```
+---
 
-### Step 3 — Regenerate all figures
+## 14. Regenerating Experimental Figures
 
 ```bash
-python simulation/generate_figures.py
+python simulation/generate_figures_v2.py
 ```
 
-Reads `results/results.json` and writes all six paper figures (PNG + PDF) and three
-LaTeX tables to `results/figures/`.
+This regenerates Figures 2–5 (admission rate, throughput, delay, CPU) from `results/results.json`.
+
+To regenerate the architecture diagram:
+
+```bash
+python simulation/gen_arch_fig_v4.py
+```
+
+Output is written to the `figures/` directory.
+
+### Report Figure Mapping
+
+| Report Figure | Filename | Script |
+|---|---|---|
+| Figure 1 — System architecture | fig_architecture.pdf | gen_arch_fig_v4.py |
+| Figure 2 — Legitimate admission rate | fig1_admission_rate.png | generate_figures_v2.py |
+| Figure 3 — Admission-based throughput | fig2_throughput.png | generate_figures_v2.py |
+| Figure 4 — End-to-end delay | fig3_delay.png | generate_figures_v2.py |
+| Figure 5 — CPU utilization | fig4_cpu.png | generate_figures_v2.py |
+| Figure 6 — Security-triggered termination | fig5_security_termination.png | (from raw_per_run.csv) |
+| Figure 7 — Security-compliant completion | fig6_compliant_completion.png | (from raw_per_run.csv) |
+| Figure 8 — Mandatory upgrade success | fig7_upgrade_success.png | (from raw_per_run.csv) |
+
+Figure numbering is generated automatically by LaTeX and is not embedded in plot titles.
+
+The throughput graph uses admission-based throughput terminology.
+
+The delay graph uses milliseconds and identifies the 20 ms SLA threshold.
 
 ---
 
-## Key Results (from `results/results.json`)
+## 15. Experimental Results
 
-- **35.7% lower mean end-to-end delay** vs. static K2 baselines under benign traffic (η = 0.0)
-- **44.4% lower CPU utilization** vs. RR-SFC at moderate attack pressure (η = 0.4, ν = 150 req/s)
-- **Full legitimate admission** sustained through 500 req/s at η = 0.4 before saturation
-- **Hysteresis validation**: all downgrades ≥ 25 s after preceding upgrade (τH = 10 s minimum hold confirmed)
-- **Reconfiguration counts**:
-  - Trace A (mild): 93.2 upgrades / 57.2 downgrades / 4.0 blocked per 120 s run
-  - Trace B (severe): 38.2 upgrades / 103.0 downgrades / 5.8 blocked per 120 s run
+The final experimental results are derived directly from verified simulation outputs.
+
+Reported numerical values are consistent across raw experimental data, generated figures, the research paper, and the project presentation.
+
+### Key Results (λ = 1,000 req/s, η = 0.4)
+
+| Method | Admission Rate | Throughput | Delay | CPU |
+|---|---:|---:|---:|---:|
+| AALB | 66.0% | 578.8 req/s | 12.2 ms | 75.3% |
+| RR-SFC | 25.9% | 249.8 req/s | 21.1 ms | 88.8% |
+| LC-SFC | 23.1% | 221.5 req/s | 22.7 ms | 75.2% |
+| Original AALB | 51.3% | 497.0 req/s | 16.1 ms | 88.3% |
 
 ---
 
-## Data Availability
+## 16. Reproducibility
 
-All simulation code, experiment configuration, result data, and figure-generation
-scripts are in this repository. The complete `results/results.json` file (pre-computed)
-is included so figures can be regenerated without re-running experiments.
+To reproduce the reported experiments:
 
-Profile-transition timestamps and per-second profile traces are embedded in
-`results/results.json` under `results['reconfig']['trace_a']['aalb']['transition_timestamps']`
-and `results['reconfig']['trace_a']['aalb']['profile_trace']` respectively, enabling
-independent verification of the hysteresis behavior reported in Section V-G.
+| Item | Value |
+|---|---|
+| Python version | 3.9 or later (tested on 3.13) |
+| numpy | ≥ 1.24 |
+| matplotlib | ≥ 3.7 |
+| Random seed | 42 |
+| Independent trials | 3 per experimental point |
+| Results file | results/results.json |
+| Raw diagnostic data | results/extended_diagnostic/raw_per_run.csv |
+
+An independent reviewer should be able to:
+
+1. Clone the public repository.
+2. Install all required dependencies.
+3. Run `python simulation/run_experiments.py`.
+4. Run `python simulation/run_remaining.py`.
+5. Run `python simulation/generate_figures_v2.py`.
+6. Compare the generated figures with those in the final research report.
+
+---
+
+## 17. Data Availability
+
+Repository: https://github.com/harry7470/net740-load-balancer
+
+The repository includes the simulation implementation, experimental data, and figure-generation scripts necessary to reproduce the reported findings.
+
+---
+
+## 18. Academic Context
+
+This project was developed for NET 470 / NET 740:
+Cloud Networking Technologies at DePaul University.
+
+Research paper:
+
+Attack-Aware Adaptive Security Service Orchestration
+for DDoS-Resilient Fog Networks
+
+Harsh Patel and Nimrah Ashraf  
+School of Computing  
+DePaul University
+
+November 2026
